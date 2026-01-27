@@ -135,7 +135,7 @@ def main(cfg):
         lmbda=cfg.lambduh,
         num_particles=cfg.num_particles,
         use_smc=cfg.use_smc,
-        adaptive_resampling=False,
+        adaptive_resampling=cfg.adaptive_resampling,
         resample_frequency=cfg.resample_frequency,
         time_steps=cfg.num_inference_steps,
         resampling_t_start=cfg.resample_t_start,

@@ -83,6 +83,7 @@ class Conf(orm.InheritableTable):
     model_name: str = orm.make_field(orm.ColumnRequired(sa.String(len("CompVis/stable-diffusion-v1-4"))) ,default="CompVis/stable-diffusion-v1-4")
     num_inference_steps: int = orm.make_field(orm.ColumnRequired(sa.Integer), default=100)
 
+    adaptive_resampling: bool = orm.make_field(orm.ColumnRequired(sa.Boolean), default=False)
     resample_frequency: int = orm.make_field(orm.ColumnRequired(sa.Integer), default=20)
     resample_t_start: int = orm.make_field(orm.ColumnRequired(sa.Integer), default=20)
     resample_t_end: int = orm.make_field(orm.ColumnRequired(sa.Integer), default=80)
