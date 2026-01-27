@@ -100,7 +100,7 @@ class FKD:
         )
         resampling_interval = np.append(resampling_interval, self.time_steps - 1)
 
-        if sampling_idx not in resampling_interval:
+        if sampling_idx not in resampling_interval and not self.adaptive_resampling:
             return latents, None
 
         # Decode latents to population images and compute rewards
