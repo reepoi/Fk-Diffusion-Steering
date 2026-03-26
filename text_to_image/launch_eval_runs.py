@@ -64,9 +64,10 @@ def main(cfg):
 
 
     # seed everything
-    torch.manual_seed(cfg.rng_seed)
-    torch.cuda.manual_seed(cfg.rng_seed)
-    torch.cuda.manual_seed_all(cfg.rng_seed)
+    rng_seed = cfg.rng_seed + 10000 * cfg.prompt.id
+    torch.manual_seed(rng_seed)
+    torch.cuda.manual_seed(rng_seed)
+    torch.cuda.manual_seed_all(rng_seed)
 
     # configure pipeline
     if "xl" in cfg.model_name and "dpo" not in cfg.model_name:
@@ -180,15 +181,17 @@ def main(cfg):
 
     # {'ImageReward': {'result': [0.8297791481018066, 0.8297791481018066, 0.8297791481018066, 0.5484601259231567], 'mean': 0.7594493627548218, 'std': 0.14065951108932495, 'max': 0.8297791481018066, 'min': 0.5484601259231567}, 'HumanPreference': {'result': [0.269775390625, 0.269775390625, 0.269775390625, 0.266845703125], 'mean': 0.26904296875, 'std': 0.00146484375, 'max': 0.269775390625, 'min': 0.266845703125}, 'time_taken': 24.903365, 'prompt': ['an underwater rollercoaster, cinematic, dramatic, -', 'an underwater rollercoaster, cinematic, dramatic, -', 'an underwater rollercoaster, cinematic, dramatic, -', 'an underwater rollercoaster, cinematic, dramatic, -']}
     with open(cfg.run_dir/'metrics_best_sample.csv', 'w', newline='') as f:
-        writer = csv.DictWriter(f, ['prompt_id', *metrics_to_compute])
+        writer = csv.DictWriter(f, ['prompt_id', 'rank', *metrics_to_compute])
         writer.writeheader()
-        to_write = {
-            'prompt_id': cfg.prompt.prompt_id,
-            **{
-                metric: results[metric]['result'][0] for metric in metrics_to_compute
+        for rank in range(len(sorted_idx)):
+            to_write = {
+                'prompt_id': cfg.prompt.prompt_id,
+                'rank': rank,
+                **{
+                    metric: results[metric]['result'][rank] for metric in metrics_to_compute
+                },
             }
-        }
-        writer.writerow(to_write)
+            writer.writerow(to_write)
 
 
     for metric in metrics_to_compute:
